@@ -1,7 +1,20 @@
 import Script from "next/script";
-import { interactionScript, siteHtml, threeSceneScript } from "./site-content";
+import { interactionScript, siteHtml } from "./site-content";
 
-const contactFormHtml = siteHtml
+export const dynamic = "force-static";
+
+function addImagePerformanceHints(html: string) {
+  return html
+    .replace(/<img\b(?![^>]*\bdecoding=)/g, '<img decoding="async"')
+    .replace(
+      /<img\b(?![^>]*\bloading=)(?![^>]*\bclass="logo-img")/g,
+      '<img loading="lazy"',
+    );
+}
+
+const optimizedSiteHtml = addImagePerformanceHints(siteHtml);
+
+const contactFormHtml = optimizedSiteHtml
   .replace(
     '<form class="contact-form" onsubmit="event.preventDefault(); alert(\'Obrigado! Em breve entraremos em contato.\');">',
     '<form class="contact-form">',
@@ -103,6 +116,34 @@ const contactFormScript = `
   })();
 `;
 
+const heroSceneLoaderScript = `
+  (function () {
+    const mount = document.getElementById('hero-3d-canvas');
+    if (!mount) return;
+
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    let loaded = false;
+    function loadHeroScene() {
+      if (loaded) return;
+      loaded = true;
+
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = '/hero-scene.js';
+      document.body.appendChild(script);
+    }
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(loadHeroScene, { timeout: 2500 });
+    } else {
+      window.setTimeout(loadHeroScene, 1200);
+    }
+  })();
+`;
+
 export default function Home() {
   return (
     <>
@@ -112,19 +153,18 @@ export default function Home() {
       />
       <Script
         id="eleven-interactions"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{ __html: interactionScript }}
       />
       <Script
         id="eleven-contact-form"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{ __html: contactFormScript }}
       />
       <Script
-        id="eleven-three-scene"
-        type="module"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{ __html: threeSceneScript }}
+        id="eleven-three-scene-loader"
+        strategy="lazyOnload"
+        dangerouslySetInnerHTML={{ __html: heroSceneLoaderScript }}
       />
     </>
   );
