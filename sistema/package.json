@@ -1,0 +1,31 @@
+{
+  "name": "sistema-eleven",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "tsx --env-file=.env scripts/migrate.ts",
+    "db:seed-demo": "tsx --env-file=.env scripts/seed-demo.ts",
+    "db:create-admin": "tsx --env-file=.env scripts/create-admin.ts",
+    "test": "tsx --env-file=.env --test --test-concurrency=1 tests/*.test.ts",
+    "docs:requisitos": "tsx scripts/gen-requisitos.ts"
+  },
+  "dependencies": {
+    "bcryptjs": "3.0.3",
+    "next": "15.5.27",
+    "postgres": "3.4.9",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3"
+  }
+}
