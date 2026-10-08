@@ -82,12 +82,17 @@ Com a demo carregada (data de referência do cenário: 08/10/2026):
 
 ## 5. Publicar (deploy)
 
-Recomendado: **Vercel + Postgres gerenciado (Neon, Supabase ou RDS)**.
+Recomendado: **Vercel + Postgres gerenciado (Neon, Supabase ou RDS)** — sem precisar de terminal.
 
-1. Crie o banco e copie a connection string (com `sslmode=require`).
-2. Rode as migrações apontando para ele: `DATABASE_URL="postgres://…" npx tsx scripts/migrate.ts` e crie o admin com `scripts/create-admin.ts` da mesma forma.
-3. Na Vercel: **New Project** → este repositório → **Root Directory = `sistema`** (projeto separado do site). Variáveis: `DATABASE_URL`, `APP_TIMEZONE=America/Sao_Paulo`. Build padrão (`next build`).
-4. Para serverless, use a URL com *pooling* do provedor (ex.: Neon “pooled”) e, se precisar, `DB_POOL_MAX=1`.
+1. Crie o banco (ex.: Neon, plano gratuito) e copie a connection string *pooled* (com `sslmode=require`).
+2. Na Vercel: **Add New → Project** → importe este repositório → **Root Directory = `sistema`** (projeto separado do site).
+3. Variáveis de ambiente:
+   - `DATABASE_URL` = connection string do banco
+   - `APP_TIMEZONE` = `America/Sao_Paulo`
+   - `ADMIN_EMAIL`, `ADMIN_PASSWORD` (8+ caracteres), `ADMIN_NAME` — cria seu acesso de direção
+   - `SEED_DEMO` = `1` se quiser os dados de demonstração (remova depois)
+4. **Deploy.** O script `vercel-build` aplica as migrações, cria o admin e (opcionalmente) a demo antes do build (`scripts/setup-db.ts`).
+5. Se der erro de conexões em serverless, adicione `DB_POOL_MAX=1`.
 
 Alternativa: qualquer host Node (`npm run build && npm start`, porta 3100) com PostgreSQL.
 

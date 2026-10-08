@@ -11,7 +11,9 @@
     "db:seed-demo": "tsx --env-file=.env scripts/seed-demo.ts",
     "db:create-admin": "tsx --env-file=.env scripts/create-admin.ts",
     "test": "tsx --env-file=.env --test --test-concurrency=1 tests/*.test.ts",
-    "docs:requisitos": "tsx scripts/gen-requisitos.ts"
+    "docs:requisitos": "tsx scripts/gen-requisitos.ts",
+    "vercel-build": "tsx scripts/setup-db.ts && next build",
+    "db:setup": "tsx --env-file=.env scripts/setup-db.ts"
   },
   "dependencies": {
     "bcryptjs": "3.0.3",
